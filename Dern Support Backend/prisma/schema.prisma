@@ -1,0 +1,105 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql" 
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int       @id @default(autoincrement())
+  fullname    String
+  email       String    @unique
+  password    String
+  userType    UserType
+  supportRequests SupportRequest[]
+  repairs     Repair[]
+}
+
+model SupportRequest {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id])
+  issue       String
+  status      SupportRequestStatus @default(PENDING)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Repair {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id])
+  description String
+  scheduleAt  DateTime
+  quote       Quote[]
+  status      RepairStatus @default(SCHEDULED)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Quote {
+  id          Int       @id @default(autoincrement())
+  repairId    Int
+  repair      Repair    @relation(fields: [repairId], references: [id])
+  amount      Float
+  createdAt   DateTime  @default(now())
+}
+
+model KnowledgeBaseArticle {
+  id          Int       @id @default(autoincrement())
+  title       String
+  content     String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model SparePart {
+  id          Int       @id @default(autoincrement())
+  name        String
+  quantity    Int
+  price       Int
+  weight      Int     // Added weight field
+  inStock     Boolean   // Added inStock field
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+
+model Job {
+  id          Int       @id @default(autoincrement())
+  description String
+  priority    JobPriority
+  scheduleAt  DateTime
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+enum UserType {
+  Business
+  Individual
+}
+
+enum SupportRequestStatus {
+  PENDING
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum RepairStatus {
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELED
+}
+
+enum JobPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
