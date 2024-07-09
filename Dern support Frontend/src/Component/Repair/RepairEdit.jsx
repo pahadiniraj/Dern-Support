@@ -1,15 +1,22 @@
 import { Formik, Form } from "formik";
 import CustomInput from "../CustomValidation/CustomInput";
 import { CustomSelect } from "../CustomValidation/CustomSelect";
+import { RepairEditSchema } from "../../Schema";
 
-const RepairEdit = ({ editData, handleChange, close, handleUpdate }) => {
+const RepairEdit = ({
+  editData,
+  handleChange,
+  close,
+  handleUpdate,
+  repairs,
+}) => {
   const showData = [
     {
       name: editData?.user?.fullname || "N/A",
       date: editData?.createdAt || "N/A",
       description: editData?.description || "N/A",
       status: editData?.status || "N/A",
-      quote: editData?.quote?.[0]?.amount || "N/A",
+      quote: 0,
     },
   ];
 
@@ -27,9 +34,10 @@ const RepairEdit = ({ editData, handleChange, close, handleUpdate }) => {
             initialValues={{
               description: editData?.description || "",
               status: editData?.status || "",
-              quote: editData?.quote?.[0]?.amount || 0,
+              quote: 0,
             }}
             onSubmit={handleUpdate}
+            validationSchema={RepairEditSchema}
           >
             {({ isSubmitting }) => (
               <Form className="w-full flex flex-col gap-2">
@@ -40,7 +48,7 @@ const RepairEdit = ({ editData, handleChange, close, handleUpdate }) => {
                         <p className="font-medium">Name </p>
                         <p>{data.name}</p>
                       </div>
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 ">
                         <p className="font-medium">Description </p>
                         <p>{data.description}</p>
                       </div>
@@ -78,6 +86,8 @@ const RepairEdit = ({ editData, handleChange, close, handleUpdate }) => {
                   type="number"
                   placeholder="Total Cost"
                   className="  "
+                  value={editData?.quote || 0}
+                  onChange={handleChange}
                 />
 
                 <button

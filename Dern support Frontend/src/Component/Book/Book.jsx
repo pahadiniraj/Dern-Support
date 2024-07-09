@@ -7,27 +7,31 @@ import CustomInput from "../CustomValidation/CustomInput";
 import { IoClose } from "react-icons/io5";
 import http from "../../Utils/Instance";
 import { ClipLoader } from "react-spinners";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Book = ({ close, onAddRepair }) => {
   const [isLoading, setIsLoading] = useState(false);
 
+  const onSubmit = async (value) => {
+    console.log(value);
+    await sendApi(value);
+  };
   const sendApi = async (value) => {
     try {
       setIsLoading(true);
       const res = await http.post("/repairs", value);
       close(false);
       onAddRepair(res.data);
+      toast.success("Booking Sucessfull ");
     } catch (error) {
+      const err = error.response?.data?.message;
       console.log(error);
+      toast.error(err);
     } finally {
       setIsLoading(false);
       close(false);
     }
-  };
-
-  const onSubmit = async (value) => {
-    console.log(value);
-    await sendApi(value);
   };
 
   return (
@@ -44,6 +48,8 @@ const Book = ({ close, onAddRepair }) => {
           initialValues={{
             description: "",
             scheduleAt: "",
+            quote: 0,
+            status: "SCHEDULED",
           }}
           validationSchema={repairSchema}
           onSubmit={onSubmit}

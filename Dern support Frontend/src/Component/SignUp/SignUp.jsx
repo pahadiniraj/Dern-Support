@@ -8,11 +8,11 @@ import { CustomPassword } from "../CustomValidation/CustomPassword";
 import { CustomConfirmPassword } from "../CustomValidation/CustomConfirmPassword";
 import { CustomAccepted } from "../CustomValidation/CustomAccepted";
 import { NavLink } from "react-router-dom";
-import axios from "axios";
 import { ClipLoader } from "react-spinners";
 import { useNavigate } from "react-router-dom";
-import { error } from "toastr";
 import http from "../../Utils/Instance";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const SignUp = () => {
   const onSubmit = async (value, action) => {
@@ -36,6 +36,7 @@ const SignUp = () => {
       console.log(res);
       const { accessToken } = res.data;
       localStorage.setItem("token", accessToken);
+      toast("Login success");
     } catch (error) {
       console.log(error);
     } finally {

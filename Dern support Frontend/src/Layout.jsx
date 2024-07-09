@@ -6,6 +6,8 @@ import { Outlet } from "react-router-dom";
 import LogOutNotification from "./Component/LogOut/LogOutNotification";
 import { TfiSupport } from "react-icons/tfi";
 import Lists from "./Component/Lists/Lists";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Layout = () => {
   const nav = useNavigate();
@@ -31,6 +33,7 @@ const Layout = () => {
   const logout = () => {
     localStorage.removeItem("accessToken");
     nav("/signin");
+    toast("You have been logged out");
   };
 
   return (

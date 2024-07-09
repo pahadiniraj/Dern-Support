@@ -6,6 +6,8 @@ import { CustomPassword } from "../CustomValidation/CustomPassword";
 import { NavLink, useNavigate } from "react-router-dom";
 import { ClipLoader } from "react-spinners";
 import http from "../../Utils/Instance";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const SignIn = () => {
   const [visible, setVisible] = useState(false);
@@ -28,11 +30,15 @@ const SignIn = () => {
       console.log(res);
       const { accessToken } = res.data;
       localStorage.setItem("accessToken", accessToken);
+      toast.success("Login success");
+      nav("/");
     } catch (error) {
       console.log(error);
+      console.log(error?.response?.data.message || error?.message);
+      toast.error(error?.response?.data.message || error?.message);
+      setLoading(false);
     } finally {
       setLoading(false);
-      nav("/");
     }
   };
 
@@ -62,7 +68,7 @@ const SignIn = () => {
                 label=""
                 name="email"
                 type="email"
-                placeholder="Enter your email"
+                placeholder="Your First Name"
               ></CustomEmail>
               <CustomPassword
                 label=""

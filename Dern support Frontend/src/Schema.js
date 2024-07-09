@@ -95,11 +95,5 @@ export const RepairEditSchema = Yup.object().shape({
       "Invalid status"
     )
     .required("Status is required"),
-  quote: Yup.number().when("status", {
-    is: "COMPLETED",
-    then: Yup.number()
-      .required("Quote is required when status is COMPLETED")
-      .positive("Quote must be a positive number"),
-    otherwise: Yup.number().notRequired(),
-  }),
+  quote: Yup.number().positive("Quote must be a positive number"),
 });

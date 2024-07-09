@@ -14,6 +14,8 @@ const SparePartComp = () => {
   const [deletePop, setDeletePop] = useState(false);
   const [deleteIndex, setDeleteIndex] = useState(null);
 
+  console.log(spareParts, "all spareParts");
+
   const formatDate = (dateString) => {
     const options = {
       day: "numeric",
@@ -57,6 +59,7 @@ const SparePartComp = () => {
   const handleDeletePop = (index) => {
     setDeleteIndex(index);
     setDeletePop(!deletePop);
+    console.log(deleteIndex + "all data");
   };
 
   const handleEdit = (index) => {
@@ -91,17 +94,16 @@ const SparePartComp = () => {
   };
 
   const handleDelete = async () => {
-    const token = localStorage.getItem("token");
+    console.log(deleteIndex);
     const index = deleteIndex;
-    const id = spareParts[index].id;
+    console.log(index + " deleted index");
+    const id = spareParts[index]?.id; // Use optional chaining
+    console.log("sparePart id:", id);
+
     try {
       setIsLoading(true);
       setDeletePop(false);
-      await http.delete(`/spareparts/${id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await http.delete(`/spareparts/${id}`);
       const updatedSpareParts = [...spareParts];
       updatedSpareParts.splice(index, 1);
       setSpareParts(updatedSpareParts);
@@ -287,7 +289,7 @@ const SparePartComp = () => {
                     <Button
                       text="Delete"
                       className="bg-red-500 text-white"
-                      onClick={() => handleDeletePop(index)}
+                      onClick={() => handleDelete(index)}
                     />
                   </td>
                 </tr>
@@ -299,8 +301,9 @@ const SparePartComp = () => {
       {deletePop && (
         <LogOutNotification
           handlePop={() => setDeletePop(false)}
-          confirm={handleDelete}
+          confirm={() => handleDelete()}
           text="Delete"
+          deleteIndex={deleteIndex}
         />
       )}
     </div>

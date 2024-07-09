@@ -5,6 +5,8 @@ import { ClipLoader } from "react-spinners";
 import Button from "../Buttons/Button";
 import LogOutNotification from "../LogOut/LogOutNotification";
 import RepairEdit from "./RepairEdit";
+import Quote from "../Quote/Quote";
+import { FaEye } from "react-icons/fa";
 
 const RepairComp = () => {
   const table = [
@@ -17,6 +19,7 @@ const RepairComp = () => {
     { tableHead: "Status" },
     { tableHead: "Created At" },
     { tableHead: "Updated At" },
+    { tableHead: "Quotes" },
     { tableHead: "Actions" },
   ];
 
@@ -89,6 +92,9 @@ const RepairComp = () => {
     setBook(false);
   };
 
+  const [viewQuoteId, setViewQuoteId] = useState(null);
+  const [openQuote, setOpenQuote] = useState(false);
+
   const handleUpdate = async () => {
     const token = localStorage.getItem("token");
     try {
@@ -112,16 +118,12 @@ const RepairComp = () => {
   const handleDelete = async () => {
     const tokan = localStorage.getItem("tokan");
     const index = editIndex;
-    const id = repairs[index].id;
+    const id = repairs[index]?.id;
     console.log(id);
     try {
       setIsLoading(true);
       setDeletePop(false);
-      await http.delete(`/repairs/${id}`, {
-        headers: {
-          Authorization: `Bearer ${tokan}`,
-        },
-      });
+      await http.delete(`/repairs/${id}`);
 
       const updatedRepairs = [...repairs];
       updatedRepairs.splice(editIndex, 1);
@@ -161,16 +163,16 @@ const RepairComp = () => {
             <thead className="text-sm">
               <tr className="bg-slate-700 text-white w-full">
                 {table.map((item, index) => (
-                  <th key={index} className="border px-2 py-2 text-center">
+                  <th key={index} className="border px-2 py-2 text-center ">
                     {item.tableHead}
                   </th>
                 ))}
               </tr>
             </thead>
 
-            <tbody className="text-xs w-full">
+            <tbody className="text-xs">
               {repairs.map((repair, index) => (
-                <tr key={index}>
+                <tr key={index} className="w-full">
                   <td className="border text-center">{repair.user?.id}</td>
                   <td className="border p-1 text-center">
                     {repair.user?.email}
@@ -184,9 +186,10 @@ const RepairComp = () => {
                   <td className="border p-1 text-center">
                     {formatDate(repair.scheduleAt)}
                   </td>
-                  <td className="border p-1 text-center">
-                    {repair.description}
+                  <td className="border p-1 text-center ">
+                    <p>{repair.description}</p>
                   </td>
+
                   <td
                     className={`border p-1 text-center  text-sm font-semibold
                     ${
@@ -207,6 +210,35 @@ const RepairComp = () => {
                   </td>
                   <td className="border p-1 text-center">
                     {formatDate(repair.updatedAt)}
+                  </td>
+                  <td className="border p-1 text-center">
+                    {repair?.quote.map((value) => (
+                      <div key={value.id} className="flex">
+                        <button onClick={() => setViewQuoteId(value.id)}>
+                          <p>View Quotes details</p>
+                          <FaEye />
+                        </button>
+
+                        {viewQuoteId === value.id && (
+                          <div className="fixed  inset-0  bg-opacity-40 bg-black z-10 backdrop-blur-sm  justify-center flex items-center ">
+                            <div className="bg-white p-4 relative">
+                              <button
+                                onClick={() => setViewQuoteId(null)}
+                                className="absolute right-2 top-1 text-base"
+                              >
+                                x
+                              </button>
+                              <p>Quote Amount: {value.amount}</p>
+                              <p>
+                                Created At:{" "}
+                                {new Date(value.createdAt).toLocaleString()}
+                              </p>
+                              <p>{repair.user?.email}</p>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
                   </td>
                   <td className="border p-1 text-center flex gap-2 flex-col">
                     <Button
